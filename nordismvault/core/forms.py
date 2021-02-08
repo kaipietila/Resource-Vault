@@ -1,8 +1,8 @@
-from django.forms import forms
+from django import forms
 
 
 class ResourceForm(forms.Form):
-    file = forms.FileField()
+    image = forms.ImageField()
     contributor_id = forms.IntegerField()
-    description = forms.Textfield()
-    tags = forms.Charfield()
+    description = forms.CharField(widget=forms.TextInput)
+    tags = forms.CharField()

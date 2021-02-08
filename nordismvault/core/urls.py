@@ -6,10 +6,10 @@ urlpatterns = [
     path('add-resource/',
          add_resource_view,
          name='core-add-resource'),
-    path('success/',
+    path('add-resource/success/',
          success_view,
          name='core-success'),
-    path('error/',
+    path('add-resource/error/',
          success_view,
          name='core-error'),
 ]

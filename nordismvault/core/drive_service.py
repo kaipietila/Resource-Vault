@@ -2,10 +2,11 @@
 from __future__ import print_function
 import os.path
 import mimetypes
+from io import BytesIO
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
+from googleapiclient.http import MediaIoBaseUpload
 
 
 SCOPES = ['https://www.googleapis.com/auth/drive.file',
@@ -14,7 +15,8 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file',
           'https://www.googleapis.com/auth/drive.metadata',
           ]
 
-path_to_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'credentials', 'resource-vault-key.json')
+path_to_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                            'credentials', 'resource-vault-key.json')
 
 
 class DriveService(object):
@@ -23,19 +25,22 @@ class DriveService(object):
                path_to_file, scopes=SCOPES)
            self.service = build('drive', 'v3', credentials=credentials)
 
-    def upload_file(self, image, folder_id='16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi'):
+    def upload_file(self, file, folder_id='16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi'):
         # 16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi test-folder
         folder_id = folder_id
-        file_name = image.file.name
+        file_name = file.name
         mime_type, _ = mimetypes.guess_type(file_name)
         file_metadata = {
             'name': file_name,
             'parents': [folder_id]
         }
-        media = MediaFileUpload(image.file.path,
-                                mimetype=mime_type,
-                                resumable=True)
-        self.service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        fh = BytesIO(file.read())
+        media = MediaIoBaseUpload(fh,
+                                  mimetype=mime_type,
+                                  chunksize=1024 * 1024,
+                                  resumable=True)
+        response = self.service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        return response['id']
 
     def create_folder(self):
         folder_metadata = {

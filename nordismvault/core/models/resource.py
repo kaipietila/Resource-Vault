@@ -5,13 +5,16 @@ from uuid import uuid4
 
 
 class Image(models.Model):
-    file = models.ImageField(upload_to='images')
-    code = models.CharField(max_length=255, blank=True)
+    drive_id = models.CharField(max_length=255)
+    name = models.CharField(max_length=128)
 
 
 class ResourceTag(models.Model):
     tag = models.CharField(max_length=255)
     description = models.CharField(max_length=255, blank=True)
+
+    def __repr__(self):
+        return self.tag
 
 
 class Resource(models.Model):
@@ -21,3 +24,6 @@ class Resource(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(ResourceTag)
+
+    def __repr__(self):
+        return self.code

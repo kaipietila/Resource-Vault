@@ -24,10 +24,12 @@ def create_resource_and_tags(data, image):
 
 
 def create_image_and_upload_to_drive(file):
-    image = Image(file=file)
-    image_id = DriveService().upload_file(image)
-    image.code = image_id
-    image.save()
+    uploaded_file_id = DriveService().upload_file(file)
+    image = Image.objects.create(
+                name=file.name,
+                drive_id=uploaded_file_id
+            )
+
     return image
 
 

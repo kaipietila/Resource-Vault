@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'bootstrap.html' %}
+{% load bootstrap5 %}
+
+{% block bootstrap5_before_content %}
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -10,9 +12,4 @@
         <a href="{% url 'signup' %}">Signup</a>
     {% endif %}
 </head>
-<body>
-{% block content %}
 {% endblock %}
-
-</body>
-</html>

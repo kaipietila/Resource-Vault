@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
+{% extends 'user_management_base.html' %}
+{% load bootstrap5 %}
+
+
+{% block bootstrap5_title %}Login{% endblock %}
+
+{% block bootstrap5_content %}
 <h1>Log in</h1>
     <form class="site-form" action="{%url 'login'%}" method="post">
         {% csrf_token %}
@@ -19,5 +19,4 @@
         </div>
 
     </form>
-</body>
-</html>
+{% endblock %}

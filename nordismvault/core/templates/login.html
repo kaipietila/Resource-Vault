@@ -6,16 +6,20 @@
 
 {% block bootstrap5_content %}
 <h1>Log in</h1>
-    <form class="site-form" action="{%url 'login'%}" method="post">
+    <form class="site-form" action="{%url 'login_user'%}" method="post">
         {% csrf_token %}
         {{form}}
-        {% if request.GET.next %}
-          <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="'alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% endif %}
         <input type="submit" value="Login">
       <div>
         <p>If you do not have an account you can signup!</p>
-        <a  href="{% url 'signup' %}" role="button">Signup</a>
+        <a  href="{% url 'signup_user' %}" role="button">Signup</a>
         </div>
 
     </form>

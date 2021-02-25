@@ -1,12 +1,12 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
 from core.models.contributor import Contributor
 
 VERIFICATION_REQUIRED_MESSAGE = 'Please wait while your account is being verified'
+INVALID_CREDENTIALS = 'Your username or password did not match. Try again!'
 
 
 def login_view(request):
@@ -14,14 +14,14 @@ def login_view(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            if user.contributor.is_verified():
-                login(request, user)
-                return redirect('core-add-resource')
-            else:
-                messages.add_message(request, messages.INFO, VERIFICATION_REQUIRED_MESSAGE)
-                return redirect('home')
-        else:
+            if not user.contributor.is_verified():
+                messages.error(request, VERIFICATION_REQUIRED_MESSAGE)
+                return redirect('login_user')
+            login(request, user)
             return redirect('home')
+        else:
+            messages.error(request, INVALID_CREDENTIALS)
+            return redirect('login_user')
     else:
         form = AuthenticationForm()
         return render(request, 'login.html', {'form': form})
@@ -29,7 +29,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('login_user')
 
 
 def create_contributor(user):
@@ -44,7 +44,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             create_contributor(user)
-            return redirect('home')
+            return redirect('login_user')
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})

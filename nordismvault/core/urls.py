@@ -1,29 +1,23 @@
 from django.urls import path
 
-from core.views.resource import add_resource_view, success_view
-from core.views.home import HomeView
+from core.views.home import home
+from core.views.resource import add_resource_view
 from core.views.user_management import login_view, logout_view, signup_view
 
 urlpatterns = [
     path('add-resource/',
          add_resource_view,
          name='core-add-resource'),
-    path('add-resource/success/',
-         success_view,
-         name='core-success'),
-    path('add-resource/error/',
-         success_view,
-         name='core-error'),
     path('',
-        HomeView.as_view(),
+         home,
          name='home'),
     path('login/',
         login_view,
-         name='login'),
+         name='login_user'),
     path('logout/',
         logout_view,
-         name='logout'),
+         name='logout_user'),
     path('signup/',
          signup_view,
-         name='signup'),
+         name='signup_user'),
 ]

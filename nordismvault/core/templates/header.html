@@ -1,22 +1,16 @@
 {% extends 'bootstrap.html' %}
 {% load bootstrap5 %}
+{% block bootstrap5_title %}Resource vault{% endblock %}
 
 {% block bootstrap5_before_content %}
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}">Logout {{ user.username }}</a>
+        <a href="{% url 'logout_user' %}">Logout {{ user.username }}</a>
     {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'signup' %}">Signup</a>
+        <a href="{% url 'login_user' %}">Login</a>
+        <a href="{% url 'signup_user' %}">Signup</a>
     {% endif %}
 </head>
 {% endblock %}

@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import  HttpResponse
 from django.shortcuts import render, redirect
 
 from core.drive_service import DriveService
@@ -40,16 +39,8 @@ def add_resource_view(request):
         if form.is_valid():
             image = create_image_and_upload_to_drive(request.FILES['image'])
             create_resource_and_tags(form.cleaned_data, image)
-            return redirect('core-success')
+            return redirect('home')
 
     else:
         form = ResourceForm(initial={'user': request.user.id})
     return render(request, 'add_resource.html', {'form': form})
-
-
-def success_view(request):
-    return HttpResponse('<h1>Success!</h1>')
-
-
-def error_view(request):
-    return HttpResponse('<h1>Error! Try again soon!</h1>')

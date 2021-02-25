@@ -1,21 +1,17 @@
 {% extends "header.html"%}
-{% load bootstrap5 %}
-{% block bootstrap5_title %}Add resources{% endblock %}
+{% load static %}
 
-{% block bootstrap5_extra_head %}
 <h1>Add Resources top Nordism Vault</h1>
-{% endblock %}
 
-{% block bootstrap5_content %}
+
+{% block content %}
 
 <form enctype="multipart/form-data" action={% url 'core-add-resource' %} method="post">
     {% csrf_token %}
-    {% bootstrap_form form %}
-    {% buttons %}
+    {{form}}
         <button type="submit" class="btn btn-primary">
           Submit
         </button>
-    {% endbuttons %}
 </form>
 
 {% endblock %}

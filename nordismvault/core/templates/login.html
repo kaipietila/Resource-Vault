@@ -1,26 +1,23 @@
 {% extends 'user_management_base.html' %}
-{% load bootstrap5 %}
 
-
-{% block bootstrap5_title %}Login{% endblock %}
-
-{% block bootstrap5_content %}
+{% block content %}
+<div>
 <h1>Log in</h1>
-    <form class="site-form" action="{%url 'login_user'%}" method="post">
-        {% csrf_token %}
-        {{form}}
-        {% if messages %}
+    {% if messages %}
             {% for message in messages %}
                 <div class="'alert alert-danger" role="alert">
                     {{ message }}
                 </div>
             {% endfor %}
-        {% endif %}
-        <input type="submit" value="Login">
+    {% endif %}
+    </form>
+    <form class="row g-3" action="{%url 'login_user'%}" method="post">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit" class="btn btn-primary">Login</button>
       <div>
         <p>If you do not have an account you can signup!</p>
         <a  href="{% url 'signup_user' %}" role="button">Signup</a>
-        </div>
-
-    </form>
+      </div>
+</div>
 {% endblock %}

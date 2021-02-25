@@ -1,23 +1,37 @@
 {% extends 'user_management_base.html' %}
 
 {% block content %}
-<div>
-<h1>Log in</h1>
-    {% if messages %}
-            {% for message in messages %}
-                <div class="'alert alert-danger" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-    {% endif %}
-    </form>
-    <form class="row g-3" action="{%url 'login_user'%}" method="post">
-        {% csrf_token %}
-        {{form}}
-        <button type="submit" class="btn btn-primary">Login</button>
-      <div>
-        <p>If you do not have an account you can signup!</p>
-        <a  href="{% url 'signup_user' %}" role="button">Signup</a>
-      </div>
+
+<div class="container" align="center" style="margin-top: 50px;">
+    <div class="row justify-content-md-center">
+        <div class="col-md-auto">
+            <h1>Log in</h1>
+                {% if messages %}
+                        {% for message in messages %}
+                            <div class="'alert alert-danger" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                {% endif %}
+        </div>
+    </div>
 </div>
+    <form action="{%url 'login_user'%}" method="post">
+    {% csrf_token %}
+        <div class="container-sm" align="center">
+            <div class="row">
+                <div class="col align-self-center">
+                    <label class="form-label">Username</label>
+                    {{form.username}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col align-self-center">
+                    <label class="form-label">Password</label>
+                    {{form.password}}
+                </div>
+            </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+    </form>
 {% endblock %}

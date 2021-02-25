@@ -12,7 +12,7 @@ def create_resource_and_tags(data, image):
     user = User.objects.get(id=data['user'])
     resource = Resource.objects.create(
         image=image,
-        user=user,
+        contributor=user.contributor,
         description=data['description'],
     )
     tag_names = data['tags'].split(',')

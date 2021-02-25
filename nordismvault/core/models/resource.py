@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User
 from django.db import models
-
 from uuid import uuid4
+
+from core.models.contributor import Contributor
 
 
 class Image(models.Model):
@@ -20,7 +20,7 @@ class ResourceTag(models.Model):
 class Resource(models.Model):
     code = models.UUIDField(default=uuid4)
     image = models.ForeignKey(Image, on_delete=models.PROTECT)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    contributor = models.ForeignKey(Contributor, on_delete=models.PROTECT)
     create_time = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True)
     tags = models.ManyToManyField(ResourceTag)

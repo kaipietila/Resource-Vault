@@ -123,5 +123,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
 /.idea/
 /credentials/
+workspace_nordism.code-workspace
+.vscode/launch.json
+.vscode/settings.json
+
+*node_modules*

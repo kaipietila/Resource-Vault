@@ -1,37 +1,38 @@
 {% extends 'user_management_base.html' %}
 
 {% block content %}
-
-<div class="container" align="center" style="margin-top: 50px;">
-    <div class="row justify-content-md-center">
-        <div class="col-md-auto">
+<div class="grid grid-cols-3">
+    <div class="col-start-2 col-end-2">
+        <div class="flex justify-center text-bold text-red-200">
             <h1>Log in</h1>
-                {% if messages %}
-                        {% for message in messages %}
-                            <div class="'alert alert-danger" role="alert">
-                                {{ message }}
+            {% if messages %}
+                    {% for message in messages %}
+                        <div class="">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+            {% endif %}
+        </div>
+        <div class="flex justify-center">
+            <form action="{%url 'login_user'%}" method="post">
+                {% csrf_token %}
+                    <div class="">
+                        <div class="">
+                            <div class="">
+                                <label class="">Username</label>
+                                {{form.username}}
                             </div>
-                        {% endfor %}
-                {% endif %}
+                        </div>
+                        <div class="my-5">
+                            <div class="">
+                                <label class="">Password</label>
+                                {{form.password}}
+                            </div>
+                        </div>
+                            <button type="submit" class="btn-primary m-10">Login</button>
+                        </div>
+            </form>
         </div>
     </div>
 </div>
-    <form action="{%url 'login_user'%}" method="post">
-    {% csrf_token %}
-        <div class="container-sm" align="center">
-            <div class="row">
-                <div class="col align-self-center">
-                    <label class="form-label">Username</label>
-                    {{form.username}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col align-self-center">
-                    <label class="form-label">Password</label>
-                    {{form.password}}
-                </div>
-            </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-    </form>
 {% endblock %}

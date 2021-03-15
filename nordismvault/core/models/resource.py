@@ -8,6 +8,9 @@ class Image(models.Model):
     drive_id = models.CharField(max_length=255)
     name = models.CharField(max_length=128)
 
+    def __repr__(self):
+        return self.name
+
 
 class ResourceTag(models.Model):
     tag = models.CharField(max_length=255)

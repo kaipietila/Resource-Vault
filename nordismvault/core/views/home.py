@@ -1,12 +1,13 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+
+from django.shortcuts import render, redirect
 
 from core.models.contributor import Contributor
 from core.models.resource import Resource
 
 
-@login_required
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect('login_user')
     contributor = Contributor.objects.get(user=request.user)
     resources = Resource.objects.filter(contributor=contributor)
     context = {

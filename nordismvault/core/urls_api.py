@@ -1,5 +1,5 @@
 from django.urls import path
-from core.api.add_resource import ResourceApi
+from core.api.resource import ResourceApi
 from core.api.contributor import ContributorApi
 
 urlpatterns = [

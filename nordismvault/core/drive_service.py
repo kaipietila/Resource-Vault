@@ -2,7 +2,7 @@ from __future__ import print_function
 import os.path
 import mimetypes
 from io import BytesIO
-from waffle import switch_is_active
+import waffle
 import random
 
 from django.conf import settings
@@ -24,7 +24,8 @@ USE_MOCK_SERVICE = 'use_mock_service'
 
 
 def get_drive_service():
-    if settings.PATH_TO_DRIVE_CREDENTIALS_FILE and not switch_is_active('USE_MOCK_SERVICE'):
+    if (settings.PATH_TO_DRIVE_CREDENTIALS_FILE 
+        and not waffle.switch_is_active('USE_MOCK_SERVICE')):
         credentials = service_account.Credentials.from_service_account_file(
             settings.PATH_TO_DRIVE_CREDENTIALS_FILE, scopes=SCOPES)
         service = build('drive', 'v3', credentials=credentials)
@@ -35,7 +36,7 @@ def get_drive_service():
 
 class BaseDriveService(object):
      def __init__(self):
-        self.get_service = get_drive_service()
+        self.service = get_drive_service()
 
 class DriveService(BaseDriveService):
     def upload_file(self, file, user):
@@ -51,7 +52,8 @@ class DriveService(BaseDriveService):
                                   mimetype=mime_type,
                                   chunksize=1024 * 1024,
                                   resumable=True)
-        response = self.service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        response = self.service.files().create(
+            body=file_metadata, media_body=media, fields='id').execute()
         return response['id']
     
     def get_or_create_folder(self, user):
@@ -66,15 +68,12 @@ class DriveService(BaseDriveService):
             'mimeType': 'application/vnd.google-apps.folder'
         }
         folder_id = self.service.files().create(
-            body=folder_metadata,
-        ).execute()
+            body=folder_metadata).execute()
         return folder_id
     
     def add_folder_permissions(self, folder_id, permission_dict):
         self.service.permissions().create(
-            fileId=folder_id,
-            body=permission_dict,
-        ).execute()
+            fileId=folder_id, body=permission_dict).execute()
 
     def get_files(self):
         response = self.service.files().list().execute()

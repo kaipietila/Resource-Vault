@@ -1,8 +1,10 @@
-# Service used to upload files with google drive api
 from __future__ import print_function
 import os.path
 import mimetypes
 from io import BytesIO
+import waffle
+
+from django.conf import settings
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -15,19 +17,25 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file',
           'https://www.googleapis.com/auth/drive.metadata',
           ]
 
-path_to_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                            'credentials', 'resource-vault-key.json')
+TEST_FOLDER_ID = "16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi"
+USE_REAL_DRIVE_FOLDERS = 'use_real_drive_folders'
 
 
 class DriveService(object):
     def __init__(self):
-           credentials = service_account.Credentials.from_service_account_file(
-               path_to_file, scopes=SCOPES)
-           self.service = build('drive', 'v3', credentials=credentials)
+        self.get_service = self.get_service()
 
-    def upload_file(self, file, folder_id='16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi'):
-        # 16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi test-folder
-        folder_id = folder_id
+    def get_service(self):
+        if settings.PATH_TO_DRIVE_CREDENTIALS_FILE:
+            credentials = service_account.Credentials.from_service_account_file(
+                path_to_file, scopes=SCOPES)
+            service = build('drive', 'v3', credentials=credentials)
+        else:
+            service = MockDriveService()
+        return service
+
+    def upload_file(self, file, user):
+        folder_id = self.get_or_create_folder(user)
         file_name = file.name
         mime_type, _ = mimetypes.guess_type(file_name)
         file_metadata = {
@@ -41,26 +49,36 @@ class DriveService(object):
                                   resumable=True)
         response = self.service.files().create(body=file_metadata, media_body=media, fields='id').execute()
         return response['id']
+    
+    def get_or_create_folder(self, user):
+        if not waffle.switch_is_active(USE_REAL_DRIVE_FOLDERS):
+            return TEST_FOLDER_ID
+        # folders are created with the username of the uploader
+        folder = self.create_folder(user.username)
 
-    def create_folder(self):
+    def create_folder(self, folder_name):
         folder_metadata = {
-            'name': 'test folder',
+            'name': folder_name,
             'mimeType': 'application/vnd.google-apps.folder'
         }
         folder = self.service.files().create(
             body=folder_metadata,
         ).execute()
-        user_permission = {
-            'type': 'user',
-            'role': 'reader',
-            "emailAddress": 'kai.pietila1@gmail.com',
-        }
+    
+    def add_folder_permissions(self, permission_dict, folder_id)
         self.service.permissions().create(
-            fileId=folder['id'],
-            body=user_permission,
+            fileId=folder_id,
+            body=permission_dict,
         ).execute()
-        return folder['id']
 
     def get_files(self):
         response = self.service.files().list().execute()
         return response.get('files', [])
+    
+    def create_folder_permissions_for_email(self, email):
+        user_permission = {
+            'type': 'user',
+            'role': 'reader',
+            "emailAddress": email,
+        }
+        return user_permission

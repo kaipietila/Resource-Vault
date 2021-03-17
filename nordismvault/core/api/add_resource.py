@@ -1,4 +1,4 @@
-"""from rest_framework import ApiView
+from rest_framework import ApiView
 from rest_framework import SessionAuthentication, BasicAuthentication
 from rest_framework import IsAuthenticated
 from rest_framework.serializers import Serializer
@@ -19,12 +19,10 @@ class ResourceSerializer(Serializer):
 class ResourceApi(ApiView):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = [IsAuthenticated]
+    http_method_names = ['get']
 
     def get(self, request):
         contributor = Contributor.objects.get(user=request.user)
         contributed_resources = Resource.objects.get(contributor=contributor)
         return Response(data=ResourceSerializer(contributed_resources, many=True))
-
-    def post(self, request):
-        pass"""
         

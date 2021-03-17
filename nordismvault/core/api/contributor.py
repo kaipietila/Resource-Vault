@@ -1,32 +1,29 @@
-from rest_framework import ApiView
-from rest_framework import SessionAuthentication, BasicAuthentication
-from rest_framework import IsAuthenticated
-from rest_framework.serializers import Serializer
-from rest_framework.serializers import ModelSerializer
-from rest_framework import Response
-from rest_framework import ValidationError
+from rest_framework.views import APIView
+from rest_framework import serializers
+from rest_framework.response  import Response
+from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 from core.models.contributor import Contributor
 from core.views.user_management import create_contributor
 
 
-class UserSerializer(ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
         fields = ['id', 'username', ]
 
 
-class ContributorSerializer(Serializer):
+class ContributorSerializer(serializers.Serializer):
     user = UserSerializer()
-    verified = Serializer.BooleanField()
+    verified = serializers.BooleanField()
     
     class Meta:
         read_only_fields = ['verified']
         
 
-class ContributorApi(ApiView):
+class ContributorApi(APIView):
     http_method_names = ['post', 'get']
 
     def post(self, request):

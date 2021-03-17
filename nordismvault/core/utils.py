@@ -10,6 +10,7 @@ def create_resource_and_tags(data, image, user):
             tag=tag_name,
         )
         resource.tags.add(tag.id)
+    return resource
 
 
 def create_image_and_upload_to_drive(file, user):

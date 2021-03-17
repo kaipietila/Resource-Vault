@@ -1,47 +1,45 @@
-from rest_framework import ApiView
-from rest_framework import SessionAuthentication, BasicAuthentication
-from rest_framework import IsAuthenticated
-from rest_framework.serializers import Serializer
-from rest_framework import Response
-from rest_framework import FileUploadParser
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
 
 from core.models.contributor import Contributor
-from core.models.resource import Resource
+from core.models.resource import Resource, ResourceTag, Image
 from core.utils import create_resource_and_tags
 from core.utils import create_image_and_upload_to_drive
 
 
-class ResourceSerializer(Serializer):
-    code = Serializer.UUIDField()
-    create_time = Serializer.DateTimeField()
-    description = Serializer.TextField()
-    tags = Serializer.PrimaryKeyRelatedField(many=True)
-    contributor = Serializer.PrimaryKeyRelatedField()
-    image = Serializer.PrimaryKeyRelatedField()
+class ResourceSerializer(serializers.Serializer):
+    code = serializers.UUIDField()
+    create_time = serializers.DateTimeField()
+    description = serializers.CharField()
+    tags = serializers.PrimaryKeyRelatedField(queryset=ResourceTag.objects.all(), many=True)
+    contributor = serializers.PrimaryKeyRelatedField(queryset=Contributor.objects.all())
+    image = serializers.PrimaryKeyRelatedField(queryset=Image.objects.all())
 
     class Meta:
         read_only_fields = ['code', 'create_time']
 
 
-class ResourceApi(ApiView):
-    http_method_names = ['get',]
+class ResourceApi(ListAPIView):
+    serializer_class = ResourceSerializer
 
-    def get(self, request):
-        contributor = Contributor.objects.get(user=request.user)
-        contributed_resources = Resource.objects.get(contributor=contributor)
-        return Response(data=ResourceSerializer(contributed_resources, many=True))
+    def get_queryset(self):
+        user = self.request.user
+        return Resource.objects.filter(contributor=user.contributor)
 
 
-class UploadResource(ApiView):
+class UploadResource(APIView):
     parser_classes = [FileUploadParser]
 
     def post(self, request, filename):
         uploaded_file = request.data['file']
         contributor_id = request.data['contributor_id']
-        try:
+        if uploaded_file:
             contributor = Contributor.objects.get(id=contributor_id)
             image = create_image_and_upload_to_drive(uploaded_file, contributor.user)
-            create_resource_and_tags(request.data, image, contributor.user)
-            return redirect('home')
-        except ValidationError as e:
-            render(request, 'add_resource.html', {'non_field_errors': e.message})
+            resource = create_resource_and_tags(request.data, image, contributor.user)
+            return Response(ResourceSerializer(resource), status_code=201)
+        else:
+            return Response(data='Image missing', status_code=400)

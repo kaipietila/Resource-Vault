@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class Contributor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='contributor')
     verified = models.BooleanField(default=False)
 
     def is_verified(self):

@@ -2,7 +2,8 @@ from __future__ import print_function
 import os.path
 import mimetypes
 from io import BytesIO
-import waffle
+from waffle import switch_is_active
+import random
 
 from django.conf import settings
 
@@ -19,21 +20,24 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file',
 
 TEST_FOLDER_ID = "16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi"
 USE_REAL_DRIVE_FOLDERS = 'use_real_drive_folders'
+USE_MOCK_SERVICE = 'use_mock_service'
 
 
-class DriveService(object):
-    def __init__(self):
-        self.get_service = self.get_service()
+def get_drive_service():
+    if settings.PATH_TO_DRIVE_CREDENTIALS_FILE and not switch_is_active('USE_MOCK_SERVICE'):
+        credentials = service_account.Credentials.from_service_account_file(
+            settings.PATH_TO_DRIVE_CREDENTIALS_FILE, scopes=SCOPES)
+        service = build('drive', 'v3', credentials=credentials)
+    else:
+        service = MockDriveService()
+    return service
 
-    def get_service(self):
-        if settings.PATH_TO_DRIVE_CREDENTIALS_FILE:
-            credentials = service_account.Credentials.from_service_account_file(
-                path_to_file, scopes=SCOPES)
-            service = build('drive', 'v3', credentials=credentials)
-        else:
-            service = MockDriveService()
-        return service
 
+class BaseDriveService(object):
+     def __init__(self):
+        self.get_service = get_drive_service()
+
+class DriveService(BaseDriveService):
     def upload_file(self, file, user):
         folder_id = self.get_or_create_folder(user)
         file_name = file.name
@@ -54,18 +58,19 @@ class DriveService(object):
         if not waffle.switch_is_active(USE_REAL_DRIVE_FOLDERS):
             return TEST_FOLDER_ID
         # folders are created with the username of the uploader
-        folder = self.create_folder(user.username)
+        return self.create_folder(user.username)
 
     def create_folder(self, folder_name):
         folder_metadata = {
             'name': folder_name,
             'mimeType': 'application/vnd.google-apps.folder'
         }
-        folder = self.service.files().create(
+        folder_id = self.service.files().create(
             body=folder_metadata,
         ).execute()
+        return folder_id
     
-    def add_folder_permissions(self, permission_dict, folder_id)
+    def add_folder_permissions(self, folder_id, permission_dict):
         self.service.permissions().create(
             fileId=folder_id,
             body=permission_dict,
@@ -82,3 +87,12 @@ class DriveService(object):
             "emailAddress": email,
         }
         return user_permission
+
+
+class MockDriveService(BaseDriveService):
+
+    def upload_file(self, file, user):
+        mock_id = random.randint(1,10000)
+        print(f"File: {file.name} uploaded to Drive for user {user}. Image id: {mock_id}")
+        return mock_id
+    

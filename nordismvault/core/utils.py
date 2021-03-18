@@ -1,16 +1,29 @@
-def create_resource_and_tags(data, image, user):
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+
+from core.models.resource import Resource, ResourceTag, Image
+from core.drive_service import DriveService
+
+
+def create_resource(image, user):
     resource = Resource.objects.create(
         image=image,
         contributor=user.contributor,
-        description=data['description'],
     )
-    tag_names = data['tags'].split(',')
-    for tag_name in tag_names:
+    return resource
+
+
+def update_resource_description(description, resource):
+    resource.description = description
+    resource.save(updated_fields=['description'])
+
+
+def add_tags_to_resource(tags, resource):
+    for tag in tags:
         tag, _ = ResourceTag.objects.get_or_create(
-            tag=tag_name,
+            tag=tag,
         )
         resource.tags.add(tag.id)
-    return resource
 
 
 def create_image_and_upload_to_drive(file, user):
@@ -21,6 +34,7 @@ def create_image_and_upload_to_drive(file, user):
             )
 
     return image
+
 
 def get_user(user_id):
     try:

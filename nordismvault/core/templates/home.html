@@ -1,4 +1,5 @@
-{% extends "header.html"%}
+{% extends "base.html"%}
+{% load static %}
 {% block title %} Home {% endblock %}
 
 {% block content %}
@@ -13,7 +14,7 @@
             <p>Verification status: {{contributor.verified}}</p> 
         </div>
     </div>
-    <div class="col-span-3 bg-red-100">
+    <div class="col-span-3 bg-gray-100">
         <div id="user_management_widget" class="flex justify-end">
             {% if user.is_authenticated %}
                 <a href="{% url 'logout_user' %}" class="btn-primary m-10">Logout</a>
@@ -22,52 +23,34 @@
                 <a href="{% url 'signup_user' %}" class="btn-primary m-10">Signup</a>
             {% endif %}
         </div>
-        <div class="mb-5 p-10 bg-white rounded-md shadow-md mr-2">
-            <div class="ml-10 bg-gray-200 rounded-md shadow-md p-5">
-                <div id="upload_resources" class="flex justify-evenly">
-                    <h2>Add an image to the Nordism Vault</h2>
-                    {% if contributor.user.is_authenticated %}
-                    <a href="{% url 'core-add-resource' %}" class="btn-primary">Upload image</a>
-                    {% endif %}
+        <div class="mb-5 p-10 bg-white rounded-md shadow-md ml-10 mr-10">
+            <h3 class="mb-2 font-semibold">Upload resources to the vault</h3>
+            <div class="bg-gray-200 rounded-md shadow-md p-10">
+                <div id="resource-form" class="flex items-start">
+                    <label>File
+                    <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
+                    </label>
+                    <button class="btn-primary" v-on:click="submitFile()">Submit</button>
                 </div>
             </div>
         </div>
-        <div class="mb-20 p-10 bg-white rounded-md shadow-md mr-2">
+        <div class="mb-20 p-10 mr-10 ml-10">
             <div>
-                <h2 class="pb-5 font-bold">Contibuted resources:</h2>
+                <h2 class="pb-5 font-bold">Uploaded resources:</h2>
             </div>
-            <div>
-                {% for resource in resources %}
-                <div id="img-list" class="p-2 m-2 text-xs font-bold">
-                    <p>Image with description: {{ resource.description }} was added on the {{ resource.create_time }}</p>
-                </div>
-                {% endfor%}
-            </div>   
+            <div id="resource-list">
+                <ul class="flex items-evenly justify-evenly">
+                    <li class="p-2 m-2 text-xs font-bold rounded-md shadow-md bg-white w-48 inline-block" v-for="resource in resources">
+                        <h3>[[ resource.description ]]</h3>
+                        <ul>
+                            <li>Uploaded: [[ resource.create_time | clean_date ]]</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
-<div id="resource-list">
-    <ul>
-        <li v-for="resource in resources">
-            [[ resource.description ]]
-        </li>
-    </ul>
-</div>
-<script>
-    var app = new Vue({
-        delimiters: ["[[", "]]"],
-        el: '#resource-list',
-        data () {
-            return {
-                resources: null
-            }
-        },
-        mounted () {
-            var url = '/api/resource/';
-            axios
-                .get(url)
-                .then(response => (this.resources = response.data))
-        }
-    })
-</script>
+<script src="{% static 'app.js' %}"></script>
+
 {% endblock %}

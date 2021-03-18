@@ -23,22 +23,12 @@ USE_REAL_DRIVE_FOLDERS = 'use_real_drive_folders'
 USE_MOCK_SERVICE = 'use_mock_service'
 
 
-def get_drive_service():
-    if (settings.PATH_TO_DRIVE_CREDENTIALS_FILE 
-        and not waffle.switch_is_active('USE_MOCK_SERVICE')):
+class DriveService(object):
+    def __init__(self):
         credentials = service_account.Credentials.from_service_account_file(
             settings.PATH_TO_DRIVE_CREDENTIALS_FILE, scopes=SCOPES)
-        service = build('drive', 'v3', credentials=credentials)
-    else:
-        service = MockDriveService()
-    return service
+        self.service = build('drive', 'v3', credentials=credentials)
 
-
-class BaseDriveService(object):
-     def __init__(self):
-        self.service = get_drive_service()
-
-class DriveService(BaseDriveService):
     def upload_file(self, file, user):
         folder_id = self.get_or_create_folder(user)
         file_name = file.name
@@ -88,10 +78,17 @@ class DriveService(BaseDriveService):
         return user_permission
 
 
-class MockDriveService(BaseDriveService):
+class MockDriveService(object):
 
     def upload_file(self, file, user):
         mock_id = random.randint(1,10000)
         print(f"File: {file.name} uploaded to Drive for user {user}. Image id: {mock_id}")
         return mock_id
-    
+
+
+def get_drive_service():
+    if waffle.switch_is_active(USE_MOCK_SERVICE):
+        service = DriveService
+    else:
+        service = MockDriveService
+    return service  

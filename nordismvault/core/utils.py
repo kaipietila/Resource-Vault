@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from core.models.resource import Resource, ResourceTag, Image
-from core.drive_service import DriveService
+from core.drive_service import get_drive_service
 
 
 def create_resource(image, user):
@@ -15,7 +15,7 @@ def create_resource(image, user):
 
 def update_resource_description(description, resource):
     resource.description = description
-    resource.save(updated_fields=['description'])
+    resource.save(update_fields=['description'])
 
 
 def add_tags_to_resource(tags, resource):
@@ -27,7 +27,7 @@ def add_tags_to_resource(tags, resource):
 
 
 def create_image_and_upload_to_drive(file, user):
-    uploaded_file_id = DriveService().upload_file(file, user)
+    uploaded_file_id = drive_service.upload_file(file, user)
     image = Image.objects.create(
                 name=file.name,
                 drive_id=uploaded_file_id
@@ -42,3 +42,5 @@ def get_user(user_id):
     except ObjectDoesNotExist:
         raise ValidationError('User does not exist')
     return user
+
+drive_service = get_drive_service()

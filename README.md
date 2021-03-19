@@ -1,12 +1,9 @@
-# Nordism Resource Vault
-DEMO for a file vault to store resources for Nordism projects.
+# Resource Vault
+DEMO for a file vault to store resources in google drive.
 
 Using Google drive API to store images in google service account drive.
-If you want to use driev you need to provide service account credentials file
-to the project and set in settings PATH_TO_DRIVE_CREDENTIALS_FILE as the path to 
-your credentials file.
 
-Also if you want to use upload files to drive disable USE_MOCK_SERVICE.
+Also if you want to use upload files to drive disable USE_MOCK_SERVICE in django settings.
 
 To setup run:
 

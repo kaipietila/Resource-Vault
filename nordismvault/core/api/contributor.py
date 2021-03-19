@@ -6,13 +6,19 @@ from django.contrib.auth.models import User
 from rest_framework import status
 
 from core.views.user_management import create_contributor
+from core.utils import create_event_log
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', ]
+        fields = ['username', 'password',]
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create(**validated_data)
+        return user
 
 
 class ContributorSerializer(serializers.Serializer):
@@ -23,17 +29,21 @@ class ContributorSerializer(serializers.Serializer):
         read_only_fields = ['verified']
         
 
-class ContributorApi(APIView):
+class SignUpApi(APIView):
     http_method_names = ['post', 'get']
 
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data['data'])
         try:
             serializer.is_valid(raise_exception=True)
             user = serializer.save()
             create_contributor(user)
+            create_event_log(payload=request.data, action='sign_up_api', user=user, status=status.HTTP_201_CREATED)
             return Response(status=status.HTTP_201_CREATED)
         except ValidationError as e:
+            create_event_log(payload=request.data, action='sign_up_api',
+                            status=status.HTTP_400_BAD_REQUEST, error_details=e.detail)
+            print(e.detail)
             return Response(data=e.detail, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):

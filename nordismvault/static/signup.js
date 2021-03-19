@@ -14,7 +14,8 @@ var signup = new Vue({
         },
         signUpUser () {
             let data = this.formdata
-            axios.post('api/contributor/', { data }
+            // posts to login/api/signup/
+            axios.post('api/signup/', { data }
             )
             .then(res => {
                 console.log('Signed up succesfully');

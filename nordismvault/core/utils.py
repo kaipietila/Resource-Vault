@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from core.models.resource import Resource, ResourceTag, Image
 from core.drive_service import get_drive_service
+from core.models.event_log import ApiEvent
 
 
 def create_resource(image, user):
@@ -42,3 +43,12 @@ def get_user(user_id):
     return user
 
 drive_service = get_drive_service()
+
+def create_event_log(payload, status, action, error_details=None, user=None):
+    ApiEvent.objects.create(
+        payload=payload,
+        user=user,
+        status=status,
+        error_details=error_details,
+        action=action,
+    )

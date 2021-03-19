@@ -29,22 +29,8 @@ class ContributorSerializer(serializers.Serializer):
         read_only_fields = ['verified']
         
 
-class SignUpApi(APIView):
-    http_method_names = ['post', 'get']
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data['data'])
-        try:
-            serializer.is_valid(raise_exception=True)
-            user = serializer.save()
-            create_contributor(user)
-            create_event_log(payload=request.data, action='sign_up_api', user=user, status=status.HTTP_201_CREATED)
-            return Response(status=status.HTTP_201_CREATED)
-        except ValidationError as e:
-            create_event_log(payload=request.data, action='sign_up_api',
-                            status=status.HTTP_400_BAD_REQUEST, error_details=e.detail)
-            print(e.detail)
-            return Response(data=e.detail, status=status.HTTP_400_BAD_REQUEST)
+class ContributorApi(APIView):
+    http_method_names = ['get',]
 
     def get(self, request):
         user_id = request.data['user_id']

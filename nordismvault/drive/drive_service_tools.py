@@ -1,4 +1,4 @@
-from core.drive_service import DriveService
+from drive.drive_service import get_drive_service
 
 
 def create_new_drive_folder_with_additional_permissions(folder_name, email):
@@ -12,4 +12,5 @@ def create_new_drive_folder_with_additional_permissions(folder_name, email):
 def get_all_files():
     drive_service.get_files()
 
-drive_service = DriveService()
+drive_service = get_drive_service(settings.DRIVE_CREDENTIALS_FILE_NAME)
+

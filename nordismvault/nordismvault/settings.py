@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'rest_framework',
+    'drive',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +130,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 MEDIA_URL = 'media/'
 
-PATH_TO_DRIVE_CREDENTIALS_FILE = os.path.join(os.path.dirname(BASE_DIR), 'credentials', 'resource-vault-key.json')
-USE_MOCK_SERVICE = True
+DRIVE_CREDENTIALS_FILE_NAME = 'resource-vault-key.json'
+
+USE_MOCK_SERVICE = False
 USE_TEST_DRIVE_FOLDER = True
+
+REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework.authentication.SessionAuthentication', 
+            'rest_framework.authentication.TokenAuthentication',
+        )
+    }

@@ -43,15 +43,3 @@ def create_contributor(user):
     Contributor.objects.create(
         user=user
     )
-
-
-def signup_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            create_contributor(user)
-            return redirect('login_user')
-    else:
-        form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})

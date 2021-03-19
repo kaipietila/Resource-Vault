@@ -1,9 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from unittest.mock import Mock, patch
-from waffle.testutils import override_switch
-import pytest
+from unittest.mock import Mock
+from unittest.mock import patch
 
 from core.models.contributor import Contributor
 from core.models.resource import Resource

@@ -39,7 +39,6 @@ class UploadResource(APIView):
         if uploaded_file:
             image = create_image_and_upload_to_drive(uploaded_file, request.user)
             resource = create_resource(image, request.user)
-            serializer = ResourceSerializer(resource)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response( status=status.HTTP_201_CREATED)
         else:
             return Response(data='Image missing', status=status.HTTP_400_BAD_REQUEST)

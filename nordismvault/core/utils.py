@@ -1,10 +1,12 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.conf import settings
 
 from core.models.resource import Resource, ResourceTag, Image
-from core.drive_service import get_drive_service
+from drive.drive_service import get_drive_service
 from core.models.event_log import ApiEvent
 
+drive_service = get_drive_service(settings.DRIVE_CREDENTIALS_FILE_NAME)
 
 def create_resource(image, user):
     resource = Resource.objects.create(
@@ -42,7 +44,6 @@ def get_user(user_id):
         raise ValidationError('User does not exist')
     return user
 
-drive_service = get_drive_service()
 
 def create_event_log(payload, status, action, error_details=None, user=None):
     ApiEvent.objects.create(

@@ -21,11 +21,14 @@ TEST_FOLDER_ID = "16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi"
 USE_REAL_DRIVE_FOLDERS = 'use_real_drive_folders'
 USE_MOCK_SERVICE = 'use_mock_service'
 
+class DriveSetupError(Exception):
+    pass
+
 
 class DriveService(object):
-    def __init__(self):
+    def __init__(self, credentials_path):
         credentials = service_account.Credentials.from_service_account_file(
-            settings.PATH_TO_DRIVE_CREDENTIALS_FILE, scopes=SCOPES)
+            credentials_path, scopes=SCOPES)
         self.service = build('drive', 'v3', credentials=credentials)
 
     def upload_file(self, file, user):
@@ -82,9 +85,13 @@ class MockDriveService(object):
         return mock_id
 
 
-def get_drive_service():
+def get_drive_service(credentials_file_name=None):
     if settings.USE_MOCK_SERVICE:
         service = MockDriveService
+    elif not credentials_file_name:
+        raise DriveSetupError(
+            'No filenamefor credentials provided. Provide the file name of credentials in this directory')
     else:
-        service = DriveService
+        path_to_creds = os.path.join(os.path.dirname(__file__), credentials_file_name)
+        service = DriveService(path_to_creds)
     return service  

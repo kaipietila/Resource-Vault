@@ -133,3 +133,5 @@ workspace_nordism.code-workspace
 .vscode/*
 
 *node_modules*
+
+resource-vault-key.json

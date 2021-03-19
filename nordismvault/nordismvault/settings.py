@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'rest_framework',
-    'waffle',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +49,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'waffle.middleware.WaffleMiddleware',
 ]
 
 ROOT_URLCONF = 'nordismvault.urls'
@@ -126,8 +124,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets')
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'media')
 MEDIA_URL = 'media/'
 
 PATH_TO_DRIVE_CREDENTIALS_FILE = os.path.join(os.path.dirname(BASE_DIR), 'credentials', 'resource-vault-key.json')
+USE_MOCK_SERVICE = True
+USE_TEST_DRIVE_FOLDER = True

@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/resource/upload/',
           UploadResource.as_view(),
           name='upload_resource_api'),
-    path('api/contributor/',
+    path('login/api/contributor/',
           ContributorApi.as_view(),
           name='contributor_api'),         
 ]

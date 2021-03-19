@@ -27,7 +27,7 @@ class ContributorApi(APIView):
     http_method_names = ['post', 'get']
 
     def post(self, request):
-        serializer = UserSerializer(request.data)
+        serializer = UserSerializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
             user = serializer.save()

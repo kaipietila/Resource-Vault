@@ -2,7 +2,6 @@ from __future__ import print_function
 import os.path
 import mimetypes
 from io import BytesIO
-import waffle
 import random
 
 from django.conf import settings
@@ -47,7 +46,7 @@ class DriveService(object):
         return response['id']
     
     def get_or_create_folder(self, user):
-        if not waffle.switch_is_active(USE_REAL_DRIVE_FOLDERS):
+        if settings.USE_TEST_DRIVE_FOLDER:
             return TEST_FOLDER_ID
         # folders are created with the username of the uploader
         return self.create_folder(user.username)
@@ -87,8 +86,8 @@ class MockDriveService(object):
 
 
 def get_drive_service():
-    if waffle.switch_is_active(USE_MOCK_SERVICE):
-        service = DriveService
-    else:
+    if settings.USE_MOCK_SERVICE:
         service = MockDriveService
+    else:
+        service = DriveService
     return service  

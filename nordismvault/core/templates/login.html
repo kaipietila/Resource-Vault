@@ -1,38 +1,48 @@
 {% extends 'user_management_base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="grid grid-cols-3">
-    <div class="col-start-2 col-end-2">
-        <div class="flex justify-center text-bold text-red-200">
-            <h1>Log in</h1>
-            {% if messages %}
-                    {% for message in messages %}
-                        <div class="">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-            {% endif %}
-        </div>
-        <div class="flex justify-center">
-            <form action="{%url 'login_user'%}" method="post">
+<div class="flex justify-center items-center h-screen">
+    <div class="w-1/3">
+        <div class="pl-5 pr-5 border-black border-4">
+            <div>
+                <h1 class="font-bold text-xl">Log in</h1>
+            </div>
+            <div class="my-10">
+                <form action="{%url 'login_user'%}" method="post">
                 {% csrf_token %}
                     <div class="">
-                        <div class="">
-                            <div class="">
-                                <label class="">Username</label>
-                                {{form.username}}
-                            </div>
-                        </div>
-                        <div class="my-5">
-                            <div class="">
-                                <label class="">Password</label>
-                                {{form.password}}
-                            </div>
-                        </div>
-                            <button type="submit" class="btn-primary m-10">Login</button>
-                        </div>
-            </form>
+                        <label class="ml-15">Username</label>
+                        <input class="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300 rounded-t-md" type="text" name="username">
+                    </div>
+                    <div class="">  
+                        <label class="">Password</label>
+                        <input class="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300 rounded-t-md" type="text" name="password">
+                    </div>
+                    <button type="submit" class="flex justify-center btn-primary my-10 ml-10">Login</button>
+                </form>
+            </div>
+        </div>
+        <div id="signup">
+            <button @click="addSignUpForm">
+            <span>Sign up</span>
+            </button>
+            <div v-if="sign_up_needed" class="pl-5 pr-5 border-4 border-black rounded-md shadow-md">
+                <form @submit="signUpUser">
+                    {% csrf_token %}
+                    <div class="">
+                        <label class="ml-15">Username</label>
+                        <input class="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300 rounded-t-md" type="text" v-model="formdata.username">
+                    </div>
+                    <div class="">  
+                        <label class="">Password</label>
+                        <input class="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300 rounded-t-md" type="text" v-model="formdata.password">
+                    </div>
+                    <button type="submit" class="btn-primary m-10">Sign Up</button>
+                </form>
+            </div>  
         </div>
     </div>
 </div>
+<script src="{% static 'signup.js' %}"></script>
 {% endblock %}

@@ -20,18 +20,16 @@ def update_resource_description(description, resource):
 
 def add_tags_to_resource(tags, resource):
     for tag in tags:
-        tag, _ = ResourceTag.objects.get_or_create(
-            tag=tag,
-        )
+        tag, _ = ResourceTag.objects.get_or_create(tag=tag,)
         resource.tags.add(tag.id)
 
 
-def create_image_and_upload_to_drive(file, user):
-    uploaded_file_id = drive_service.upload_file(file, user)
+def create_image_and_upload_to_drive(uploaded_image, user):
+    uploaded_image_drive_id = drive_service().upload_file(uploaded_image, user)
     image = Image.objects.create(
-                name=file.name,
-                drive_id=uploaded_file_id
-            )
+        name=uploaded_image.name,
+        drive_id=uploaded_image_drive_id
+    )
 
     return image
 

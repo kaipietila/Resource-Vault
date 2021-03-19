@@ -1,27 +1,26 @@
 
-var signup = new Vue({
+var invite = new Vue({
     delimiters: ["[[", "]]"],
-    el: '#signup',
+    el: '#invite',
     data () {
         return {
-            sign_up_needed: false,
-            formdata:{ username: '', password: '' }
+            invite_needed: false,
+            email: ''
         }
     },
     methods: {
-        addSignUpForm () {
-            this.sign_up_needed = !this.sign_up_needed
+        addInviteForm () {
+            this.invite_needed = !this.invite_needed
         },
-        signUpUser () {
-            let data = this.formdata
-            // posts to login/api/signup/
-            axios.post('api/signup/', { data }
+        InviteRequest () {
+            // posts to login/api/invitation
+            axios.post('api/invitation/', {email: this.email}
             )
             .then(res => {
-                console.log('Signed up succesfully');
+                console.log('Invitation requested succesfully');
              })
              .catch(err => { 
-                console.log('Error during sign up');
+                console.log('Error during submission');
              })
         }
     }

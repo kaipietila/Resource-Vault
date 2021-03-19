@@ -23,22 +23,18 @@
                 </form>
             </div>
         </div>
-        <div id="signup">
-            <button @click="addSignUpForm">
-            <span>Sign up</span>
+        <div id="invite">
+            <button @click="addInviteForm">
+            <span>Request invitation</span>
             </button>
-            <div v-if="sign_up_needed" class="pl-5 pr-5 border-4 border-black rounded-md shadow-md">
-                <form @submit="signUpUser">
+            <div v-if="invite_needed" class="pl-5 pr-5 border-4 border-black rounded-md shadow-md">
+                <form @submit="InviteRequest">
                     {% csrf_token %}
-                    <div class="">
-                        <label class="ml-15">Username</label>
-                        <input class="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300 rounded-t-md" type="text" v-model="formdata.username">
+                    <div>
+                        <label class="ml-15">Email</label>
+                        <input class="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300 rounded-t-md" type="text" v-model="email">
                     </div>
-                    <div class="">  
-                        <label class="">Password</label>
-                        <input class="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300 rounded-t-md" type="text" v-model="formdata.password">
-                    </div>
-                    <button type="submit" class="btn-primary m-10">Sign Up</button>
+                    <button type="submit" class="btn-primary m-10">Send invitation request</button>
                 </form>
             </div>  
         </div>

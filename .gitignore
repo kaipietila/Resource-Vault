@@ -130,5 +130,6 @@ dmypy.json
 workspace_nordism.code-workspace
 .vscode/launch.json
 .vscode/settings.json
+.vscode/*
 
 *node_modules*

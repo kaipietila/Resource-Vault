@@ -37,10 +37,7 @@ class DriveService(object):
             'parents': [folder_id]
         }
         fh = BytesIO(file.read())
-        media = MediaIoBaseUpload(fh,
-                                  mimetype=mime_type,
-                                  chunksize=1024 * 1024,
-                                  resumable=True)
+        media = MediaIoBaseUpload(fh, mimetype=mime_type, chunksize=1024 * 1024, resumable=True)
         response = self.service.files().create(
             body=file_metadata, media_body=media, fields='id').execute()
         return response['id']

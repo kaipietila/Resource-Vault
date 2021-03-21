@@ -18,8 +18,6 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file',
           ]
 
 TEST_FOLDER_ID = "16G1GcrqqbQDC2NuyKDY35zb9hRe-dRdi"
-USE_REAL_DRIVE_FOLDERS = 'use_real_drive_folders'
-USE_MOCK_SERVICE = 'use_mock_service'
 
 class DriveSetupError(Exception):
     pass

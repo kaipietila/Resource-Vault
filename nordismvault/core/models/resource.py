@@ -30,3 +30,7 @@ class Resource(models.Model):
 
     def __repr__(self):
         return self.code
+    
+    def update_description(self, new_description):
+        self.description = new_description
+        self.save(update_fields=['description'])

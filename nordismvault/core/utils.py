@@ -15,11 +15,6 @@ def create_resource(image, user):
     return resource
 
 
-def update_resource_description(description, resource):
-    resource.description = description
-    resource.save(update_fields=['description'])
-
-
 def add_tags_to_resource(tags, resource):
     for tag in tags:
         tag, _ = ResourceTag.objects.get_or_create(tag=tag,)

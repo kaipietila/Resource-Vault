@@ -27,19 +27,22 @@ class DriveSetupError(Exception):
 
 class DriveService(object):
     def __init__(self, credentials_path):
-        credentials = service_account.Credentials.from_service_account_file(
-            credentials_path, scopes=SCOPES)
+        credentials = get_credentials(credentials_path)
         self.service = build('drive', 'v3', credentials=credentials)
 
-    def upload_file(self, file, user):
+    def upload_file(self, file_to_upload, user):
         folder_id = self.get_or_create_folder(user)
-        file_name = file.name
+        file_name = file_to_upload.name
         mime_type, _ = mimetypes.guess_type(file_name)
         file_metadata = {
             'name': file_name,
             'parents': [folder_id]
         }
-        fh = BytesIO(file.read())
+        byte_file = BytesIO(file_to_upload.read())
+        response_id = self.do_upload(byte_file, mime_type)
+        return response_id
+    
+    def do_upload(byte_file, mime_type):
         media = MediaIoBaseUpload(fh, mimetype=mime_type, chunksize=1024 * 1024, resumable=True)
         response = self.service.files().create(
             body=file_metadata, media_body=media, fields='id').execute()
@@ -47,9 +50,10 @@ class DriveService(object):
     
     def get_or_create_folder(self, user):
         if settings.USE_TEST_DRIVE_FOLDER:
-            return TEST_FOLDER_ID
+            folder_id = TEST_FOLDER_ID
         # folders are created with the username of the uploader
-        return self.create_folder(user.username)
+        folder_id = self.create_folder(user.username)
+        return folder_id
 
     def create_folder(self, folder_name):
         folder_metadata = {
@@ -95,3 +99,8 @@ def get_drive_service(credentials_file_name=None):
         path_to_creds = os.path.join(os.path.dirname(__file__), credentials_file_name)
         service = DriveService(path_to_creds)
     return service  
+
+def get_credentials(credentials_path):
+    creds = service_account.Credentials.from_service_account_file(
+        credentials_path, scopes=SCOPES)
+    return creds

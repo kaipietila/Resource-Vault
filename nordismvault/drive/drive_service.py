@@ -87,6 +87,23 @@ class MockDriveService(object):
         mock_id = random.randint(1,10000)
         print(f"File: {file.name} uploaded to Drive for user {user}. Image id: {mock_id}")
         return mock_id
+    
+    def get_files(self):
+        return ''
+    
+    def create_folder_permissions_for_email(self, email):
+        user_permission = {
+            'type': 'user',
+            'role': 'reader',
+            "emailAddress": email,
+        }
+        return user_permission
+    
+    def add_folder_permissions(self, folder_id, permission_dict):
+        return
+    
+    def create_folder(self, folder_name):
+        return random.randint(0,100)
 
 
 def get_drive_service(credentials_file_name=None):

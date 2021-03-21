@@ -21,7 +21,7 @@ class InvitationRequestApi(APIView):
             InvitationRequest.objects.create(
                 email=serializer.validated_data['email']
             )
-            create_event_log(action='invitation_api', payload=request.data, status=200)
+            create_event_log(action='invitation_api', payload=request.data, status=201)
             return Response(status=status.HTTP_201_CREATED)
         except ValidationError as e:
             create_event_log(action='invitation_api', payload=request.data, status=400, error_details=e.detail)

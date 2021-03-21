@@ -16,10 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'password',]
         extra_kwargs = {'password': {'write_only': True}}
 
-    def create(self, validated_data):
-        user = User.objects.create(**validated_data)
-        return user
-
 
 class ContributorSerializer(serializers.Serializer):
     user = UserSerializer()
@@ -33,9 +29,10 @@ class ContributorApi(APIView):
     http_method_names = ['get',]
 
     def get(self, request):
-        user_id = request.data['user_id']
+        user_id = request.query_params.get('user_id')
         if user_id:
             user = User.objects.get(id=user_id)
-            return Response(data=ContributorSerializer(user.contributor), status=status.HTTP_200_OK)
+            serializer = ContributorSerializer(user.contributor)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(data='Invalid payload', status=status.HTTP_400_BAD_REQUEST)

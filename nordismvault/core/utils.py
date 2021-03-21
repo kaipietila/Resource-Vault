@@ -33,7 +33,6 @@ def create_image_and_upload_to_drive(uploaded_image, user):
         name=uploaded_image.name,
         drive_id=uploaded_image_drive_id
     )
-
     return image
 
 

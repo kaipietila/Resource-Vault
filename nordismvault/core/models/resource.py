@@ -34,3 +34,8 @@ class Resource(models.Model):
     def update_description(self, new_description):
         self.description = new_description
         self.save(update_fields=['description'])
+    
+    def add_tags(self, tags):
+        for tag in tags:
+            tag, _ = ResourceTag.objects.get_or_create(tag=tag)
+            self.tags.add(tag.id)

@@ -1,14 +1,13 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.test import override_settings
 
-from unittest.mock import Mock
-from unittest.mock import patch
+from unittest.mock import MagicMock
 
 from core.models.contributor import Contributor
 from core.models.resource import Resource
 from core.utils import create_resource
 from core.models.resource import Image
-from core.utils import update_resource_description
 from core.utils import add_tags_to_resource
 from core.utils import create_image_and_upload_to_drive
 
@@ -35,16 +34,11 @@ class TestUtils(TestCase):
 
         self.assertEqual(resource.image, self.img)
         self.assertEqual(resource.contributor, self.contributor)
-
-    def test_update_resource_description(self):
-        self.assertEqual('', self.resource.description)
-        description = 'description'
-        update_resource_description(description, self.resource)
-
-        self.assertEqual(description, self.resource.description)
     
-    def test_add_tags_to_resource(self):
-        tag_list = ['one', 'two', 'three',]
-        add_tags_to_resource(tag_list, self.resource)
+    @override_settings(USE_MOCK_SERVICE=True)
+    def test_create_image_and_upload_to_drive(self):
+        image_file = MagicMock()
+        image_file.name = 'image'
 
-        self.assertEqual(3, len(self.resource.tags.all()))
+        image = create_image_and_upload_to_drive(image_file, self.user)
+        self.assertEqual('image', image.name)

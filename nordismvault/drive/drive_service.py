@@ -26,8 +26,8 @@ class DriveSetupError(Exception):
 
 
 class DriveService(object):
-    def __init__(self, credentials_path):
-        credentials = get_credentials(credentials_path)
+    def __init__(self):
+        credentials = get_credentials()
         self.service = build('drive', 'v3', credentials=credentials)
 
     def upload_file(self, file_to_upload, user):
@@ -106,18 +106,23 @@ class MockDriveService(object):
         return random.randint(0,100)
 
 
-def get_drive_service(credentials_file_name=None):
+def get_drive_service():
     if settings.USE_MOCK_SERVICE:
         service = MockDriveService
-    elif not credentials_file_name:
-        raise DriveSetupError(
-            'No filenamefor credentials provided. Provide the file name of credentials in this directory')
     else:
-        path_to_creds = os.path.join(os.path.dirname(__file__), credentials_file_name)
-        service = DriveService(path_to_creds)
+        service = DriveService
     return service  
 
-def get_credentials(credentials_path):
+def get_credentials():
+    try:
+        path_to_creds = get_credentials_path()
+    except FileNotFoundError:
+        raise DriveSetupError('Credentials file not properly setup')
     creds = service_account.Credentials.from_service_account_file(
-        credentials_path, scopes=SCOPES)
+        path_to_creds, scopes=SCOPES)
     return creds
+
+def get_credentials_path():
+    path_to_creds = os.path.join(os.path.dirname(__file__), 
+                                     settings.DRIVE_CREDENTIALS_FILE_NAME)
+    return path_to_creds

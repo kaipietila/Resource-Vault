@@ -14,4 +14,4 @@ def create_new_drive_folder_with_additional_permissions(folder_name, email=None)
 def get_all_files():
     drive_service.get_files()
 
-drive_service = get_drive_service(settings.DRIVE_CREDENTIALS_FILE_NAME)
+drive_service = get_drive_service()

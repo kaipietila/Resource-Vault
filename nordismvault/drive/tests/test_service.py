@@ -1,10 +1,16 @@
 from django.test import TestCase
+from django.test import override_settings
+
 from unittest.mock import MagicMock
 from unittest.mock import patch
+from unittest.mock import ANY
 import os
 
 from drive.drive_service import DriveService
 from drive.drive_service import MockDriveService
+from drive.drive_service import get_drive_service
+from drive.drive_service import get_credentials
+from drive.drive_service import DriveSetupError
 
 
 class TestDriveService(TestCase):
@@ -24,7 +30,7 @@ class TestDriveService(TestCase):
         self.mock_credentials = self.get_credentials_patcher.start()
         self.mock_build = self.google_build_patcher.start()
         
-        self.drive_service = DriveService('mock_credentials_path')
+        self.drive_service = DriveService()
 
     def tearDown(self):
         self.get_credentials_patcher.stop()
@@ -75,3 +81,25 @@ class TestMockDriveService(TestCase):
     def test_mock_drive_upload(self):
         random_uploaded_file_id = self.service.upload_file(self.file_to_upload, self.user)
         self.assertTrue(random_uploaded_file_id)
+
+class TestDriveSetupUtils(TestCase):
+
+    @override_settings(USE_MOCK_SERVICE=True)
+    def test_get_service_mock(self):
+        service = get_drive_service()
+        self.assertEqual(MockDriveService, service)
+    
+    @override_settings(USE_MOCK_SERVICE=False)
+    def test_get_service_real_with_creds(self):
+        service = get_drive_service()
+        self.assertEqual(DriveService, service)
+
+    def test_get_credentials(self):
+        creds_path_patcher = patch('drive.drive_service.get_credentials_path', return_value='path')
+        google_service_account_patch = patch('google.oauth2.service_account.Credentials.from_service_account_file', 
+                                             return_value='creds')
+        with creds_path_patcher as creds_path_mock, google_service_account_patch as google_mock:
+            credentials = get_credentials()
+            creds_path_mock.assert_called_once()
+            google_mock.assert_called_once_with('path', scopes=ANY)
+        self.assertEqual('creds', credentials)

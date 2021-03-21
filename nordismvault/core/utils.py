@@ -6,7 +6,6 @@ from core.models.resource import Resource, ResourceTag, Image
 from drive.drive_service import get_drive_service
 from core.models.event_log import ApiEvent
 
-drive_service = get_drive_service(settings.DRIVE_CREDENTIALS_FILE_NAME)
 
 def create_resource(image, user):
     resource = Resource.objects.create(
@@ -28,6 +27,7 @@ def add_tags_to_resource(tags, resource):
 
 
 def create_image_and_upload_to_drive(uploaded_image, user):
+    drive_service = get_drive_service()
     uploaded_image_drive_id = drive_service().upload_file(uploaded_image, user)
     image = Image.objects.create(
         name=uploaded_image.name,

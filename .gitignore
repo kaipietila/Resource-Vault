@@ -135,4 +135,4 @@ workspace_nordism.code-workspace
 *node_modules*
 
 resource-vault-key.json
-secret.txt
+nordismvault/nordismvault/secret.txt
